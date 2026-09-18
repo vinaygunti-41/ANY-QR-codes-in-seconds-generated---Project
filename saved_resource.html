@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<!-- saved from url=(0012)about:srcdoc -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QR Studio Pro — Free QR Code Generator &amp; Scanner</title>
+<meta name="description" content="Generate premium, high-resolution, transparent QR codes for free. Scan codes instantly. No tracking, no sign-ups, no ads.">
+<meta name="keywords" content="QR code generator, free QR code, transparent QR code, custom QR code, QR scanner, Naem Azam">
+<meta name="author" content="Naem Azam">
+<link rel="canonical" href="https://naemazam.github.io/Free-QR-Code-Generator/">
+<meta property="og:title" content="QR Studio Pro — Free QR Code Generator">
+<meta property="og:description" content="Generate premium, transparent QR codes for free. No ads, no sign-ups.">
+<meta property="og:url" content="https://naemazam.github.io/Free-QR-Code-Generator/">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#020617">
+<link rel="icon" href="data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22&gt;&lt;text y=%22.9em%22 font-size=%2290%22&gt;%E2%96%A6&lt;/text&gt;&lt;/svg&gt;">
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-0:#020617; --bg-1:#071A2F; --bg-2:#0F172A;
+    --glass:rgba(15,23,42,0.55); --glass-brd:rgba(148,163,184,0.14);
+    --cyan:#22D3EE; --blue:#3B82F6; --violet:#7C3AED; --purple:#A855F7; --pink:#EC4899; --green:#00FF99;
+    --grad:linear-gradient(120deg,#00E5FF,#3B82F6 45%,#7C3AED);
+    --text-hi:#F8FAFC; --text-mid:#CBD5E1; --text-lo:#64748B; --text-cyan:#67E8F9;
+    --radius:22px; --radius-sm:14px;
+    --ease:cubic-bezier(.16,.84,.44,1);
+  }
+  [data-theme="light"]{
+    --bg-0:#F1F5F9; --bg-1:#E2E8F0; --bg-2:#F8FAFC;
+    --glass:rgba(255,255,255,0.6); --glass-brd:rgba(15,23,42,0.08);
+    --text-hi:#0F172A; --text-mid:#334155; --text-lo:#64748B; --text-cyan:#0891B2;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; min-height:100vh; color:var(--text-hi);
+    font-family:'Inter',sans-serif; line-height:1.5;
+    background:
+      radial-gradient(ellipse 900px 600px at 15% -10%, rgba(59,130,246,.25), transparent 60%),
+      radial-gradient(ellipse 800px 700px at 110% 10%, rgba(124,58,237,.22), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 50% 120%, rgba(34,211,238,.15), transparent 60%),
+      var(--bg-0);
+    overflow-x:hidden; position:relative; transition:background .4s var(--ease), color .4s var(--ease);
+  }
+  h1,h2,h3,.display{font-family:'Space Grotesk',sans-serif; letter-spacing:-0.02em;}
+  a{color:inherit;}
+  ::selection{background:var(--cyan); color:#02131c;}
+  .container{max-width:1180px; margin:0 auto; padding:0 24px;}
+  .hidden{display:none !important;}
+
+  /* ---------- animated backdrop ---------- */
+  #bg-canvas{position:fixed; inset:0; z-index:-2; overflow:hidden; pointer-events:none;}
+  .grid-overlay{position:absolute; inset:0; background-image:
+      linear-gradient(rgba(148,163,184,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(148,163,184,.05) 1px, transparent 1px);
+    background-size:48px 48px; mask-image:radial-gradient(ellipse 70% 60% at 50% 20%, black 40%, transparent 90%);}
+  .orb{position:absolute; border-radius:50%; filter:blur(70px); opacity:.5; animation:drift 22s ease-in-out infinite;}
+  .orb1{width:420px; height:420px; background:var(--blue); top:-10%; left:-8%; animation-delay:0s;}
+  .orb2{width:380px; height:380px; background:var(--violet); top:30%; right:-10%; animation-delay:-7s;}
+  .orb3{width:340px; height:340px; background:var(--cyan); bottom:-12%; left:30%; animation-delay:-14s;}
+  @keyframes drift{
+    0%,100%{transform:translate(0,0) scale(1);}
+    50%{transform:translate(40px,-30px) scale(1.08);}
+  }
+  .particle{position:absolute; width:3px; height:3px; border-radius:50%; background:var(--cyan);
+    box-shadow:0 0 8px 2px var(--cyan); animation:rise linear infinite; opacity:.7;}
+  @keyframes rise{
+    0%{transform:translateY(0) translateX(0); opacity:0;}
+    10%{opacity:.8;}
+    90%{opacity:.4;}
+    100%{transform:translateY(-100vh) translateX(20px); opacity:0;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .orb,.particle,*{animation-duration:.01ms !important; animation-iteration-count:1 !important;}
+  }
+
+  /* ---------- navbar ---------- */
+  .navbar{position:sticky; top:0; z-index:100; backdrop-filter:blur(18px) saturate(140%);
+    background:var(--glass); border-bottom:1px solid var(--glass-brd);}
+  .nav-inner{display:flex; align-items:center; justify-content:space-between; padding:14px 0;}
+  .brand{display:flex; align-items:center; gap:12px; text-decoration:none; cursor:pointer;}
+  .brand-mark{width:40px; height:40px; border-radius:12px; background:var(--grad); display:flex; align-items:center; justify-content:center;
+    box-shadow:0 0 0 1px rgba(255,255,255,.15) inset, 0 6px 20px rgba(59,130,246,.4); flex-shrink:0;}
+  .brand-name{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.15rem; color:var(--text-hi); line-height:1.1;}
+  .brand-sub{font-size:.68rem; color:var(--text-cyan); letter-spacing:.04em;}
+  .nav-links{display:flex; align-items:center; gap:28px;}
+  .nav-link{font-size:.92rem; font-weight:500; color:var(--text-mid); text-decoration:none; cursor:pointer; position:relative; padding:4px 0; transition:color .2s;}
+  .nav-link::after{content:''; position:absolute; left:0; bottom:-2px; width:0; height:2px; background:var(--grad); transition:width .25s var(--ease);}
+  .nav-link:hover{color:var(--text-hi);}
+  .nav-link:hover::after{width:100%;}
+  .icon-btn{width:38px; height:38px; border-radius:10px; border:1px solid var(--glass-brd); background:rgba(255,255,255,.03);
+    display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-mid); transition:.2s;}
+  .icon-btn:hover{color:var(--text-hi); border-color:var(--cyan); box-shadow:0 0 14px rgba(34,211,238,.35);}
+  .btn-scan-nav{background:var(--grad); color:#04121f; border:none; padding:10px 20px; border-radius:999px; font-weight:600; font-size:.88rem;
+    cursor:pointer; box-shadow:0 6px 20px rgba(59,130,246,.35); transition:transform .2s, box-shadow .2s;}
+  .btn-scan-nav:hover{transform:translateY(-2px); box-shadow:0 10px 26px rgba(124,58,237,.45);}
+
+  /* ---------- hero ---------- */
+  .hero{padding:88px 0 60px; display:grid; grid-template-columns:1.1fr .9fr; gap:48px; align-items:center;}
+  .eyebrow-badges{display:flex; flex-wrap:wrap; gap:10px; margin:20px 0 28px;}
+  .badge{font-size:.78rem; padding:7px 14px; border-radius:999px; background:rgba(255,255,255,.04); border:1px solid var(--glass-brd); color:var(--text-mid); display:flex; align-items:center; gap:6px;}
+  .badge span.dot{width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 8px var(--green);}
+  .hero h1{font-size:clamp(2.3rem,4.6vw,3.6rem); font-weight:700; line-height:1.08; margin:0 0 18px;
+    background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; background-size:200% auto; animation:sheen 6s linear infinite;}
+  @keyframes sheen{0%{background-position:0% center;} 100%{background-position:200% center;}}
+  .hero p.lede{color:var(--text-mid); font-size:1.08rem; max-width:480px; margin-bottom:32px;}
+  .hero-ctas{display:flex; gap:14px; flex-wrap:wrap;}
+  .btn-primary{background:var(--grad); color:#04121f; border:none; padding:14px 26px; border-radius:14px; font-weight:600; font-size:.96rem; cursor:pointer;
+    box-shadow:0 8px 26px rgba(59,130,246,.4); transition:transform .2s var(--ease), box-shadow .2s;}
+  .btn-primary:hover{transform:translateY(-3px); box-shadow:0 14px 34px rgba(124,58,237,.5);}
+  .btn-ghost{background:rgba(255,255,255,.04); color:var(--text-hi); border:1px solid var(--glass-brd); padding:14px 26px; border-radius:14px;
+    font-weight:600; font-size:.96rem; cursor:pointer; transition:.2s;}
+  .btn-ghost:hover{border-color:var(--cyan); box-shadow:0 0 20px rgba(34,211,238,.25);}
+  .hero-visual{position:relative; display:flex; justify-content:center; align-items:center; height:380px;}
+  .hero-card{width:280px; height:280px; border-radius:28px; background:var(--glass); border:1px solid var(--glass-brd);
+    backdrop-filter:blur(20px); display:flex; align-items:center; justify-content:center; position:relative;
+    box-shadow:0 20px 60px rgba(2,6,23,.5), 0 0 0 1px rgba(255,255,255,.04) inset;
+    animation:floaty 5s ease-in-out infinite; transform-style:preserve-3d;}
+  @keyframes floaty{0%,100%{transform:translateY(0) rotate(-1.5deg);} 50%{transform:translateY(-14px) rotate(1.5deg);}}
+  .hero-card svg{width:70%; height:70%; opacity:.92;}
+  .hero-ring{position:absolute; inset:-18px; border-radius:36px; border:1px solid rgba(34,211,238,.35); filter:blur(.3px); animation:pulse-ring 3s ease-in-out infinite;}
+  @keyframes pulse-ring{0%,100%{opacity:.35; transform:scale(1);} 50%{opacity:.8; transform:scale(1.03);}}
+
+  /* ---------- section shell ---------- */
+  section{padding:70px 0;}
+  .section-head{text-align:left; max-width:560px; margin-bottom:42px;}
+  .section-head h2{font-size:clamp(1.7rem,3vw,2.3rem); margin:0 0 10px; color:var(--text-hi);}
+  .section-head p{color:var(--text-mid); margin:0; font-size:1rem;}
+
+  /* ---------- glass card base ---------- */
+  .glass{background:var(--glass); border:1px solid var(--glass-brd); backdrop-filter:blur(20px) saturate(140%);
+    border-radius:var(--radius); box-shadow:0 20px 50px rgba(2,6,23,.35);}
+
+  /* ---------- generator ---------- */
+  .app-grid{display:grid; grid-template-columns:1.1fr .9fr; gap:28px; align-items:start;}
+  .gen-card{padding:34px;}
+  .gen-card h3{margin:0 0 6px; font-size:1.3rem;}
+  .gen-card > p{color:var(--text-lo); margin:0 0 26px; font-size:.92rem;}
+  .control-group{margin-bottom:22px;}
+  .control-label{display:block; font-size:.72rem; font-weight:700; letter-spacing:.06em; color:var(--text-cyan); margin-bottom:8px;}
+  .input-wrap{position:relative;}
+  .input-wrap svg{position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text-lo); width:18px; height:18px;}
+  input[type="text"]{
+    width:100%; padding:14px 14px 14px 42px; border-radius:14px; border:1.5px solid var(--glass-brd);
+    background:rgba(255,255,255,.03); color:var(--text-hi); font-size:.98rem; outline:none; transition:.2s;
+  }
+  input[type="text"]::placeholder{color:var(--text-lo);}
+  input[type="text"]:focus{border-color:var(--cyan); box-shadow:0 0 0 4px rgba(34,211,238,.14);}
+  .style-options{display:grid; grid-template-columns:repeat(3,1fr); gap:8px;}
+  .style-btn{padding:12px; border-radius:12px; border:1.5px solid var(--glass-brd); background:rgba(255,255,255,.02);
+    color:var(--text-mid); font-weight:600; font-size:.85rem; cursor:pointer; transition:.2s;}
+  .style-btn.active{border-color:var(--cyan); color:var(--text-hi); background:rgba(34,211,238,.1); box-shadow:0 0 16px rgba(34,211,238,.25);}
+  .style-btn:hover{border-color:var(--cyan);}
+  .checkbox-container{display:flex; align-items:center; gap:10px; margin-top:18px; font-size:.9rem; font-weight:500; color:var(--text-mid); cursor:pointer;}
+  .checkbox-container input{width:18px; height:18px; accent-color:var(--cyan); cursor:pointer;}
+  .main-btn{width:100%; padding:15px; border:none; border-radius:14px; cursor:pointer; font-size:.98rem; font-weight:600; transition:.2s var(--ease);}
+
+  .preview-side{display:flex; flex-direction:column; align-items:center; padding:30px; position:relative;}
+  #qrcode{
+    background-color:#fff;
+    background-image:linear-gradient(45deg,#eee 25%,transparent 25%,transparent 75%,#eee 75%,#eee),
+                      linear-gradient(45deg,#eee 25%,transparent 25%,transparent 75%,#eee 75%,#eee);
+    background-size:20px 20px; background-position:0 0,10px 10px;
+    padding:18px; border-radius:20px; margin-bottom:18px; min-height:236px; width:236px;
+    display:flex; justify-content:center; align-items:center;
+    box-shadow:0 0 0 1px rgba(34,211,238,.25), 0 20px 50px rgba(2,6,23,.5);
+    position:relative; overflow:hidden;
+  }
+  #qrcode::before{content:''; position:absolute; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+    top:0; animation:scan 2.6s linear infinite; opacity:.8;}
+  @keyframes scan{0%{top:0;} 100%{top:100%;}}
+  .btn-download{background:linear-gradient(120deg,#0F172A,#1E293B); color:#fff; border:1px solid var(--glass-brd); margin-top:4px; display:none; width:100%;}
+  .btn-download:hover{border-color:var(--cyan); box-shadow:0 0 18px rgba(34,211,238,.3);}
+  .btn-secondary-row{display:flex; gap:8px; width:100%; margin-top:8px;}
+  .btn-secondary-row button{flex:1; padding:11px; border-radius:12px; border:1px solid var(--glass-brd); background:rgba(255,255,255,.03);
+    color:var(--text-mid); font-size:.82rem; font-weight:600; cursor:pointer; transition:.2s; display:none;}
+  .btn-secondary-row button:hover{color:var(--text-hi); border-color:var(--cyan);}
+  .toast{position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(20px); background:#0F172A; color:#F8FAFC;
+    border:1px solid var(--glass-brd); padding:12px 20px; border-radius:12px; font-size:.88rem; opacity:0; pointer-events:none;
+    transition:.3s var(--ease); z-index:2000; box-shadow:0 10px 30px rgba(0,0,0,.4);}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  /* ---------- features ---------- */
+  .feature-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  .feature-card{padding:26px; transition:transform .25s var(--ease), box-shadow .25s;}
+  .feature-card:hover{transform:translateY(-6px); box-shadow:0 24px 50px rgba(59,130,246,.18);}
+  .feature-icon{width:46px; height:46px; border-radius:12px; background:var(--grad); display:flex; align-items:center; justify-content:center;
+    margin-bottom:16px; box-shadow:0 0 22px rgba(59,130,246,.35);}
+  .feature-icon svg{width:22px; height:22px; color:#04121f;}
+  .feature-card h4{margin:0 0 8px; font-size:1.02rem;}
+  .feature-card p{margin:0; color:var(--text-lo); font-size:.88rem;}
+
+  /* ---------- stats ---------- */
+  .stats-bar{display:grid; grid-template-columns:repeat(4,1fr); gap:20px; padding:36px; text-align:center;}
+  .stat-num{font-family:'Space Grotesk',sans-serif; font-size:2rem; font-weight:700; background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .stat-label{color:var(--text-lo); font-size:.82rem; margin-top:4px;}
+
+  /* ---------- templates ---------- */
+  .tpl-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:14px;}
+  .tpl-card{padding:18px 10px; text-align:center; cursor:pointer; transition:.2s;}
+  .tpl-card:hover{border-color:var(--cyan); transform:translateY(-4px);}
+  .tpl-card svg{width:24px; height:24px; margin:0 auto 8px; color:var(--text-cyan);}
+  .tpl-card span{font-size:.8rem; color:var(--text-mid); font-weight:600;}
+
+  /* ---------- about ---------- */
+  .about-card{text-align:center; max-width:600px; margin:0 auto; padding:44px;}
+  .profile-ring{width:104px; height:104px; border-radius:50%; margin:0 auto 18px; padding:4px;
+    background:conic-gradient(from 0deg, var(--cyan), var(--violet), var(--pink), var(--cyan)); animation:spin 6s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .profile-img{width:100%; height:100%; border-radius:50%; background:var(--bg-2); display:flex; align-items:center; justify-content:center; font-size:2.3rem;}
+  .about-card h3{margin:0 0 2px; font-size:1.3rem;}
+  .about-card .role{color:var(--text-cyan); font-size:.88rem; margin-bottom:16px;}
+  .about-card p.bio{color:var(--text-mid); line-height:1.6; max-width:420px; margin:0 auto 22px;}
+  .skill-badges{display:flex; justify-content:center; flex-wrap:wrap; gap:8px; margin-bottom:24px;}
+  .skill-badge{font-size:.76rem; padding:5px 12px; border-radius:999px; background:rgba(255,255,255,.04); border:1px solid var(--glass-brd); color:var(--text-mid);}
+  .social-links{display:flex; justify-content:center; flex-wrap:wrap; gap:10px;}
+  .social-btn{padding:9px 16px; border-radius:10px; text-decoration:none; font-weight:600; font-size:.85rem; display:flex; align-items:center; gap:7px; transition:.2s; color:#fff;}
+  .social-github{background:#181717;} .social-youtube{background:#FF0000;} .social-twitter{background:#000;}
+  .social-btn:hover{transform:translateY(-2px); filter:brightness(1.15);}
+
+  /* ---------- modals ---------- */
+  .modal-overlay{position:fixed; inset:0; background:rgba(2,6,23,.72); backdrop-filter:blur(6px);
+    display:none; justify-content:center; align-items:center; z-index:1000; padding:20px;}
+  .modal-overlay.open{display:flex; animation:fadeIn .2s ease;}
+  @keyframes fadeIn{from{opacity:0;} to{opacity:1;}}
+  .modal{background:var(--bg-2); border:1px solid var(--glass-brd); padding:36px; border-radius:26px; max-width:420px; width:100%;
+    position:relative; text-align:center; box-shadow:0 30px 80px rgba(0,0,0,.5); animation:pop .25s var(--ease);}
+  @keyframes pop{from{transform:scale(.92); opacity:0;} to{transform:scale(1); opacity:1;}}
+  .close-btn{position:absolute; top:16px; right:16px; cursor:pointer; background:rgba(255,255,255,.06); border:none;
+    width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text-mid); font-size:1.1rem;}
+  .close-btn:hover{color:var(--text-hi); background:rgba(255,255,255,.12);}
+  .github-star-icon{font-size:2.6rem; margin-bottom:10px; filter:drop-shadow(0 0 14px rgba(250,204,21,.6));}
+  .modal-title{font-size:1.35rem; font-weight:700; margin-bottom:8px; font-family:'Space Grotesk',sans-serif;}
+  .modal-desc{color:var(--text-mid); line-height:1.55; margin-bottom:26px; font-size:.92rem;}
+  .modal-actions{display:flex; flex-direction:column; gap:10px;}
+  .btn-github{background:#181717; color:#fff; display:flex; align-items:center; justify-content:center; gap:10px; text-decoration:none; padding:13px; border-radius:12px; font-weight:600;}
+  .login-field{margin-bottom:16px; text-align:left;}
+  .login-field label{display:block; font-size:.72rem; font-weight:700; letter-spacing:.06em; color:var(--text-cyan); margin-bottom:8px;}
+  .login-input-wrap{position:relative;}
+  .login-input-wrap svg{position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text-lo); width:17px; height:17px;}
+  .login-input-wrap input{width:100%; padding:13px 13px 13px 40px; border-radius:12px; border:1.5px solid var(--glass-brd);
+    background:rgba(255,255,255,.03); color:var(--text-hi); font-size:.94rem; outline:none; transition:.2s;}
+  .login-input-wrap input:focus{border-color:var(--cyan); box-shadow:0 0 0 4px rgba(34,211,238,.14);}
+  .login-error{color:var(--pink); font-size:.8rem; margin:-6px 0 14px; text-align:left; display:none;}
+  .login-note{color:var(--text-lo); font-size:.76rem; margin-top:16px;}
+  .user-chip{display:flex; align-items:center; gap:8px; padding:6px 14px 6px 6px; border-radius:999px; background:rgba(255,255,255,.04);
+    border:1px solid var(--glass-brd); cursor:pointer; font-size:.85rem; font-weight:600; color:var(--text-hi);}
+  .user-chip .avatar{width:26px; height:26px; border-radius:50%; background:var(--grad); display:flex; align-items:center; justify-content:center;
+    color:#04121f; font-weight:700; font-size:.78rem;}
+  #reader{width:100%; border-radius:14px; overflow:hidden; background:#000;}
+  .result-box{margin-top:16px; padding:16px; background:rgba(34,211,238,.08); border:1px solid rgba(34,211,238,.3); border-radius:14px; display:none; word-break:break-all; text-align:left;}
+  .result-box strong{color:var(--text-cyan); display:block; margin-bottom:4px; font-size:.8rem;}
+  .result-actions{display:flex; gap:8px; margin-top:12px;}
+  .result-actions button, .result-actions a{flex:1; text-align:center; padding:8px; border-radius:8px; border:1px solid var(--glass-brd);
+    background:rgba(255,255,255,.04); color:var(--text-hi); font-size:.78rem; font-weight:600; cursor:pointer; text-decoration:none;}
+
+  /* ---------- footer ---------- */
+  .footer{border-top:1px solid var(--glass-brd); padding:60px 0 24px; margin-top:40px; background:rgba(2,6,23,.3);}
+  .footer-grid{display:grid; grid-template-columns:2fr 1fr 1fr; gap:40px; padding-bottom:30px; border-bottom:1px solid var(--glass-brd);}
+  .footer-brand h3{margin:0 0 10px; font-family:'Space Grotesk',sans-serif;}
+  .footer-brand p{color:var(--text-lo); font-size:.88rem; max-width:300px; line-height:1.6; margin-bottom:18px;}
+  .footer-social{display:flex; gap:10px;}
+  .footer-social a{width:38px; height:38px; border-radius:10px; background:rgba(255,255,255,.04); display:flex; align-items:center; justify-content:center; color:var(--text-mid); transition:.2s;}
+  .footer-social a:hover{background:var(--grad); color:#04121f; transform:translateY(-3px);}
+  .footer-links h4{font-size:.82rem; color:var(--text-cyan); letter-spacing:.05em; margin-bottom:14px;}
+  .footer-links ul{list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:10px;}
+  .footer-links a{color:var(--text-mid); text-decoration:none; font-size:.88rem; cursor:pointer;}
+  .footer-links a:hover{color:var(--text-hi);}
+  .footer-bottom{display:flex; justify-content:space-between; align-items:center; padding-top:22px; font-size:.82rem; color:var(--text-lo); flex-wrap:wrap; gap:10px;}
+  .back-top{width:40px; height:40px; border-radius:50%; background:var(--grad); color:#04121f; border:none; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; position:fixed; bottom:26px; right:26px; box-shadow:0 10px 26px rgba(59,130,246,.4); opacity:0; pointer-events:none; transition:.3s; z-index:500;}
+  .back-top.show{opacity:1; pointer-events:auto;}
+
+  @media (max-width:900px){
+    .hero{grid-template-columns:1fr; text-align:center; padding-top:60px;}
+    .hero p.lede{margin-left:auto; margin-right:auto;}
+    .hero-ctas{justify-content:center;}
+    .app-grid{grid-template-columns:1fr;}
+    .feature-grid{grid-template-columns:1fr 1fr;}
+    .tpl-grid{grid-template-columns:repeat(3,1fr);}
+    .stats-bar{grid-template-columns:1fr 1fr;}
+    .footer-grid{grid-template-columns:1fr; text-align:center;}
+    .footer-brand p{margin-left:auto; margin-right:auto;}
+    .footer-social{justify-content:center;}
+    .nav-links .nav-link{display:none;}
+  }
+  @media (max-width:520px){
+    .feature-grid{grid-template-columns:1fr;}
+    .tpl-grid{grid-template-columns:repeat(2,1fr);}
+    .stats-bar{grid-template-columns:1fr 1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div id="bg-canvas">
+  <div class="grid-overlay"></div>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <div id="particles"><div class="particle" style="left: 3.81514vw; bottom: -10px; animation-duration: 14.5369s; animation-delay: 7.02974s; opacity: 0.37;"></div><div class="particle" style="left: 66.1126vw; bottom: -10px; animation-duration: 18.3961s; animation-delay: 4.19976s; opacity: 0.36;"></div><div class="particle" style="left: 66.492vw; bottom: -10px; animation-duration: 19.8229s; animation-delay: 4.55772s; opacity: 0.43;"></div><div class="particle" style="left: 28.4989vw; bottom: -10px; animation-duration: 12.0302s; animation-delay: 5.16131s; opacity: 0.67;"></div><div class="particle" style="left: 63.2906vw; bottom: -10px; animation-duration: 19.7683s; animation-delay: 3.78589s; opacity: 0.35;"></div><div class="particle" style="left: 75.4544vw; bottom: -10px; animation-duration: 14.1606s; animation-delay: 1.63166s; opacity: 0.68;"></div><div class="particle" style="left: 34.8569vw; bottom: -10px; animation-duration: 14.6281s; animation-delay: 7.41056s; opacity: 0.79;"></div><div class="particle" style="left: 89.7164vw; bottom: -10px; animation-duration: 12.8106s; animation-delay: 7.05955s; opacity: 0.3;"></div><div class="particle" style="left: 53.6363vw; bottom: -10px; animation-duration: 18.453s; animation-delay: 5.33616s; opacity: 0.75;"></div><div class="particle" style="left: 71.1576vw; bottom: -10px; animation-duration: 20.125s; animation-delay: 7.73577s; opacity: 0.33;"></div><div class="particle" style="left: 18.4531vw; bottom: -10px; animation-duration: 16.3547s; animation-delay: 6.61563s; opacity: 0.46;"></div><div class="particle" style="left: 75.578vw; bottom: -10px; animation-duration: 20.5829s; animation-delay: 5.49198s; opacity: 0.74;"></div><div class="particle" style="left: 65.6789vw; bottom: -10px; animation-duration: 20.1729s; animation-delay: 8.3038s; opacity: 0.64;"></div><div class="particle" style="left: 49.0898vw; bottom: -10px; animation-duration: 21.8869s; animation-delay: 4.68965s; opacity: 0.78;"></div><div class="particle" style="left: 86.4329vw; bottom: -10px; animation-duration: 20.1806s; animation-delay: 6.50142s; opacity: 0.77;"></div><div class="particle" style="left: 1.4367vw; bottom: -10px; animation-duration: 10.3422s; animation-delay: 7.87968s; opacity: 0.32;"></div><div class="particle" style="left: 67.2735vw; bottom: -10px; animation-duration: 14.7356s; animation-delay: 4.09177s; opacity: 0.8;"></div><div class="particle" style="left: 75.3883vw; bottom: -10px; animation-duration: 18.4115s; animation-delay: 9.16425s; opacity: 0.73;"></div><div class="particle" style="left: 50.2729vw; bottom: -10px; animation-duration: 14.1968s; animation-delay: 7.54551s; opacity: 0.68;"></div><div class="particle" style="left: 63.9633vw; bottom: -10px; animation-duration: 10.8195s; animation-delay: 7.91684s; opacity: 0.53;"></div><div class="particle" style="left: 37.4738vw; bottom: -10px; animation-duration: 16.8706s; animation-delay: 1.40284s; opacity: 0.45;"></div><div class="particle" style="left: 31.6834vw; bottom: -10px; animation-duration: 18.7233s; animation-delay: 9.62371s; opacity: 0.52;"></div><div class="particle" style="left: 76.6324vw; bottom: -10px; animation-duration: 11.937s; animation-delay: 3.29935s; opacity: 0.63;"></div><div class="particle" style="left: 59.8953vw; bottom: -10px; animation-duration: 14.2832s; animation-delay: 1.91819s; opacity: 0.63;"></div><div class="particle" style="left: 29.2715vw; bottom: -10px; animation-duration: 19.4311s; animation-delay: 7.01997s; opacity: 0.76;"></div><div class="particle" style="left: 12.0698vw; bottom: -10px; animation-duration: 12.8512s; animation-delay: 2.04379s; opacity: 0.33;"></div><div class="particle" style="left: 35.7157vw; bottom: -10px; animation-duration: 14.8605s; animation-delay: 6.14134s; opacity: 0.52;"></div><div class="particle" style="left: 54.2437vw; bottom: -10px; animation-duration: 12.1219s; animation-delay: 8.70951s; opacity: 0.54;"></div></div>
+</div>
+
+<nav class="navbar">
+  <div class="container nav-inner">
+    <a class="brand" onclick="showView('home')">
+      <div class="brand-mark">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#04121f" stroke-width="3"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+      </div>
+      <div>
+        <div class="brand-name">QR Studio Pro</div>
+        <div class="brand-sub">Generate • Scan • Download</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <span class="nav-link" onclick="showView('home')">Home</span>
+      <span class="nav-link" onclick="scrollToId('generator')">Generator</span>
+      <span class="nav-link" onclick="scrollToId('templates')">Templates</span>
+      <span class="nav-link" onclick="showView('about')">About Creator</span>
+      <button class="icon-btn" id="themeToggle" title="Toggle theme" onclick="toggleTheme()">
+        <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path></svg>
+      </button>
+      <span id="loggedOutSlot">
+        <button class="icon-btn" title="Log in" onclick="openLogin()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"></path><path d="M10 17l5-5-5-5"></path><path d="M15 12H3"></path></svg>
+        </button>
+      </span>
+      <span id="loggedInSlot" class="hidden">
+        <div class="user-chip" onclick="logout()" title="Click to log out">
+          <span class="avatar" id="userAvatar">U</span>
+          <span id="userNameLabel">User</span>
+        </div>
+      </span>
+      <button onclick="openScanner()" class="btn-scan-nav">Scan Code</button>
+    </div>
+  </div>
+</nav>
+
+<div id="homeView">
+
+  <!-- HERO -->
+  <header class="hero container">
+    <div>
+      <div class="eyebrow-badges">
+        <span class="badge"><span class="dot"></span>100% Free</span>
+        <span class="badge"><span class="dot"></span>HD PNG</span>
+        <span class="badge"><span class="dot"></span>Transparent QR</span>
+      </div>
+      <h1>Create QR codes in seconds</h1>
+      <p class="lede">A fast, private QR generator and scanner — no accounts, no watermarks, no tracking. Just paste a link and download.</p>
+      <div class="hero-ctas">
+        <button class="btn-primary" onclick="scrollToId('generator')">Generate a QR</button>
+        <button class="btn-ghost" onclick="openScanner()">Scan a QR</button>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-ring"></div>
+      <div class="hero-card glass">
+        <svg viewBox="0 0 100 100" fill="none">
+          <rect x="8" y="8" width="24" height="24" rx="3" stroke="url(#g1)" stroke-width="4"></rect>
+          <rect x="68" y="8" width="24" height="24" rx="3" stroke="url(#g1)" stroke-width="4"></rect>
+          <rect x="8" y="68" width="24" height="24" rx="3" stroke="url(#g1)" stroke-width="4"></rect>
+          <rect x="16" y="16" width="8" height="8" fill="url(#g1)"></rect>
+          <rect x="76" y="16" width="8" height="8" fill="url(#g1)"></rect>
+          <rect x="16" y="76" width="8" height="8" fill="url(#g1)"></rect>
+          <rect x="44" y="8" width="8" height="8" fill="url(#g1)"></rect>
+          <rect x="44" y="24" width="8" height="8" fill="url(#g1)"></rect>
+          <rect x="60" y="44" width="8" height="8" fill="url(#g1)"></rect>
+          <rect x="76" y="44" width="8" height="8" fill="url(#g1)"></rect>
+          <rect x="44" y="60" width="8" height="8" fill="url(#g1)"></rect>
+          <rect x="44" y="76" width="8" height="8" fill="url(#g1)"></rect>
+          <rect x="60" y="60" width="24" height="24" rx="3" stroke="url(#g1)" stroke-width="4"></rect>
+          <defs><lineargradient id="g1" x1="0" y1="0" x2="100" y2="100"><stop offset="0%" stop-color="#22D3EE"></stop><stop offset="100%" stop-color="#A855F7"></stop></lineargradient></defs>
+        </svg>
+      </div>
+    </div>
+  </header>
+
+  <!-- GENERATOR -->
+  <section id="generator" class="container">
+    <div class="app-grid">
+      <div class="gen-card glass">
+        <h3>Generate your QR</h3>
+        <p>Paste any link or text below to preview it instantly.</p>
+        <div class="control-group">
+          <label class="control-label">URL / Text</label>
+          <div class="input-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.07 0l1.93-1.93a5 5 0 00-7.07-7.07L10.5 5.5"></path><path d="M14 11a5 5 0 00-7.07 0L5 12.93a5 5 0 007.07 7.07L13.5 18.5"></path></svg>
+            <input type="text" id="urlInput" placeholder="https://github.com/vinaygunti-41" oninput="generateQR()">
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Design Style</label>
+          <div class="style-options">
+            <button class="style-btn active" onclick="setStyle('square', this)">Square</button>
+            <button class="style-btn" onclick="setStyle('rounded', this)">Rounded</button>
+            <button class="style-btn" onclick="setStyle('dots', this)">Dots</button>
+          </div>
+          <label class="checkbox-container">
+            <input type="checkbox" id="transparentBg" onchange="generateQR()">
+            Transparent background
+          </label>
+        </div>
+        <button class="main-btn btn-primary" onclick="generateQR()">Create QR Code</button>
+      </div>
+
+      <div class="preview-side glass">
+        <div id="qrcode">
+          <span style="color:#94a3b8; background:#fff; padding:4px 8px; border-radius:6px; font-size:.85rem;">Preview area</span>
+        </div>
+        <button id="downloadBtn" class="main-btn btn-download" onclick="triggerDownloadProcess()">Download PNG</button>
+        <div class="btn-secondary-row">
+          <button id="copyBtn" onclick="copyQrImage()">Copy image</button>
+          <button id="shareBtn" onclick="shareQr()">Share</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="container">
+    <div class="section-head">
+      <h2>Built to just work</h2>
+      <p>Every feature runs in your browser — nothing is uploaded, stored, or tracked.</p>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-card glass">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect></svg></div>
+        <h4>Transparent QR</h4>
+        <p>Export codes with a see-through background, ready to drop onto any design.</p>
+      </div>
+      <div class="feature-card glass">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="7" width="18" height="12" rx="2"></rect><circle cx="12" cy="13" r="3"></circle></svg></div>
+        <h4>Built-in scanner</h4>
+        <p>Scan with your camera or upload an image — decoded instantly, on-device.</p>
+      </div>
+      <div class="feature-card glass">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"></path></svg></div>
+        <h4>Instant download</h4>
+        <p>Get a crisp, high-resolution PNG the moment you hit generate.</p>
+      </div>
+      <div class="feature-card glass">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 2l9 4.5v6c0 5-3.8 8.6-9 9.5-5.2-.9-9-4.5-9-9.5v-6L12 2z"></path></svg></div>
+        <h4>Private by design</h4>
+        <p>Everything is generated locally — no data ever leaves your device.</p>
+      </div>
+      <div class="feature-card glass">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="5" y="2" width="14" height="20" rx="2"></rect><path d="M9 18h6"></path></svg></div>
+        <h4>Mobile friendly</h4>
+        <p>Works smoothly on phones, tablets, and desktops alike.</p>
+      </div>
+      <div class="feature-card glass">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg></div>
+        <h4>Unlimited &amp; free</h4>
+        <p>No limits, no watermark, no account required — forever.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="container">
+    <div class="stats-bar glass">
+      <div><div class="stat-num" data-target="1000000" data-suffix="+">1M+</div><div class="stat-label">QR codes generated</div></div>
+      <div><div class="stat-num" data-target="100" data-suffix="%">100%</div><div class="stat-label">Free forever</div></div>
+      <div><div class="stat-num-static stat-num">HD</div><div class="stat-label">Download quality</div></div>
+      <div><div class="stat-num-static stat-num">24/7</div><div class="stat-label">Works offline</div></div>
+    </div>
+  </section>
+
+  <!-- TEMPLATES -->
+  <section id="templates" class="container">
+    <div class="section-head">
+      <h2>Quick-start templates</h2>
+      <p>Jump straight to a common format — the input is pre-filled for you.</p>
+    </div>
+    <div class="tpl-grid">
+      <div class="tpl-card glass" onclick="useTemplate('WIFI:T:WPA;S:NetworkName;P:password;;')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13a10 10 0 0114 0M8.5 16.5a5 5 0 017 0M12 20h.01"></path></svg>
+        <span>WiFi</span>
+      </div>
+      <div class="tpl-card glass" onclick="useTemplate('https://wa.me/10000000000')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"></path></svg>
+        <span>WhatsApp</span>
+      </div>
+<div class="tpl-card glass" onclick="useTemplate('https://www.linkedin.com/in/vinaygunti-dataanalyst/')">
+  <svg viewBox="0 0 24 24" fill="currentColor">
+    <path d="M19 3A2 2 0 0 1 21 5V19A2 2 0 0 1 19 21H5A2 2 0 0 1 3 19V5A2 2 0 0 1 5 3H19ZM8.34 18.34V10.83H5.85V18.34H8.34ZM7.09 9.78A1.44 1.44 0 1 0 7.09 6.9A1.44 1.44 0 0 0 7.09 9.78ZM18.15 18.34V14.22C18.15 12.01 16.97 10.58 14.98 10.58C13.98 10.58 13.31 11.13 13.06 11.65V10.83H10.58C10.61 11.37 10.58 18.34 10.58 18.34H13.06V14.15C13.06 13.93 13.08 13.71 13.14 13.55C13.31 13.11 13.69 12.66 14.35 12.66C15.21 12.66 15.56 13.31 15.56 14.27V18.34H18.15Z"></path>
+  </svg>
+  <span>LinkedIn</span>
+</div>
+      <div class="tpl-card glass" onclick="useTemplate('mailto:vinaygunti2004@gmail.com')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 7l9 6 9-6"></path></svg>
+        <span>Email</span>
+      </div>
+      <div class="tpl-card glass" onclick="useTemplate('tel:+19 6305827629')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.7A2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .3 2 .7 3a2 2 0 01-.5 2.1L8 10a16 16 0 006 6l1.2-1.3a2 2 0 012.1-.5c1 .4 2 .6 3 .7a2 2 0 011.7 2z"></path></svg>
+        <span>Phone</span>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ABOUT VIEW -->
+<div id="aboutView" class="container hidden" style="padding:60px 24px;">
+  <div class="about-card glass">
+    <div class="profile-ring"><div class="profile-img">👨‍💻</div></div>
+    <h3>gunti vinay</h3>
+    <div class="role">Software Developer</div>
+    <p class="bio">I build tools that simplify the web. This project is open source and free for everyone to use.</p>
+    <div class="skill-badges">
+      <span class="skill-badge">JavaScript</span>
+      <span class="skill-badge">Open Source</span>
+      <span class="skill-badge">UI Design</span>
+      <span class="skill-badge">Web Tools</span>
+    </div>
+       <div class="social-links">
+      <a href="https://github.com/vinaygunti-41" target="_blank" class="social-btn social-github">GitHub</a>
+      <a href="https://www.linkedin.com/in/vinaygunti-dataanalyst/" target="_blank" class="social-btn social-youtube">YouTube</a>
+      <a href="https://devoted-jade-0of9azstaa.edgeone.app/" target="_blank" class="social-btn social-twitter">Twitter</a>
+    </div>
+    <button class="main-btn btn-primary" style="margin-top:26px; width:auto; padding:12px 26px;" onclick="showView('home')">Return to generator</button>
+  </div>
+</div>
+
+<!-- GITHUB MODAL -->
+<div class="modal-overlay" id="githubModal">
+  <div class="modal">
+    <button class="close-btn" onclick="closeGithubModal()">×</button>
+    <div class="github-star-icon">⭐</div>
+    <div class="modal-title">Support the project</div>
+    <p class="modal-desc">Your QR code download has started. If this tool helped you, consider starring it on GitHub — it really helps.</p>
+    <div class="modal-actions">
+     <a href="https://github.com/vinaygunti-41/ANY-QR-codes-in-seconds-generated---Project" target="_blank" class="btn-github" onclick="closeGithubModal()">
+
+  <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path>
+  </svg>
+
+  Star on GitHub
+      </a>
+      <button class="main-btn btn-ghost" onclick="closeGithubModal()">Maybe later</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- LOGIN MODAL -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal">
+    <button class="close-btn" onclick="closeLogin()">×</button>
+    <div class="github-star-icon">🔐</div>
+    <div class="modal-title">Log in</div>
+    <p class="modal-desc">Sign in to save your preferences on this device.</p>
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="login-field">
+        <label for="loginUsername">Username</label>
+        <div class="login-input-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 4-6 8-6s8 2 8 6"></path></svg>
+          <input type="text" id="loginUsername" placeholder="Enter username" autocomplete="username" required="">
+        </div>
+      </div>
+      <div class="login-field">
+        <label for="loginPassword">Password</label>
+        <div class="login-input-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="2"></rect><path d="M8 11V7a4 4 0 118 0v4"></path></svg>
+          <input type="password" id="loginPassword" placeholder="Enter password" autocomplete="current-password" required="" minlength="4">
+        </div>
+      </div>
+      <div class="login-error" id="loginError">Please enter a username and a password (4+ characters).</div>
+      <button type="submit" class="main-btn btn-primary">Log in</button>
+    </form>
+    <p class="login-note">Demo login only — stored on this device, no server or account is created.</p>
+  </div>
+</div>
+
+<!-- SCANNER MODAL -->
+<div class="modal-overlay" id="scannerModal">
+  <div class="modal">
+    <button class="close-btn" onclick="closeScanner()">×</button>
+    <h3 style="margin-top:0;">Scan a QR code</h3>
+    <div id="reader"></div>
+    <div style="margin-top:18px; display:flex; gap:10px;">
+      <button class="main-btn btn-primary" onclick="document.getElementById('fileInput').click()">Upload image</button>
+      <input type="file" id="fileInput" hidden="" accept="image/*" onchange="scanFile(this)">
+    </div>
+    <div id="resultBox" class="result-box">
+      <strong>Found</strong>
+      <a id="scannedUrl" href="https://www.codechef.com/html-online-compiler#" target="_blank"></a>
+      <div class="result-actions">
+        <button onclick="copyScanResult()">Copy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>QR Studio Pro</h3>
+        <p>Fast, secure, and beautiful QR code generation. No tracking, just utility.</p>
+        <div class="footer-social">
+          <a href="https://github.com/vinaygunti-41" target="_blank" title="GitHub">
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4>Tool</h4>
+        <ul>
+          <li><a onclick="showView('home')">Generator</a></li>
+          <li><a onclick="openScanner()">Scanner</a></li>
+          <li><a onclick="scrollToId('templates')">Templates</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>About</h4>
+        <ul>
+          <li><a onclick="showView('about')">Creator</a></li>
+          <li><a href="https://github.com/naemazam/Free-QR-Code-Generator" target="_blank">Star repo</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year">2026</span> QR Studio Pro.</span>
+      <span>Created by Gunti vinay</span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+/* ---------- theme ---------- */
+(function initTheme(){
+  let saved = null;
+  try{ saved = localStorage.getItem('qr-theme'); }catch(e){}
+  if(saved === 'light'){ document.documentElement.setAttribute('data-theme','light'); }
+})();
+function toggleTheme(){
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  if(isLight){ document.documentElement.removeAttribute('data-theme'); }
+  else{ document.documentElement.setAttribute('data-theme','light'); }
+  try{ localStorage.setItem('qr-theme', isLight ? 'dark' : 'light'); }catch(e){}
+}
+
+/* ---------- particles ---------- */
+(function spawnParticles(){
+  const wrap = document.getElementById('particles');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce) return;
+  const count = window.innerWidth < 700 ? 14 : 28;
+  for(let i=0;i<count;i++){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random()*100 + 'vw';
+    p.style.bottom = '-10px';
+    p.style.animationDuration = (10 + Math.random()*12) + 's';
+    p.style.animationDelay = (Math.random()*10) + 's';
+    p.style.opacity = (0.3 + Math.random()*0.5).toFixed(2);
+    wrap.appendChild(p);
+  }
+})();
+
+/* ---------- view switching ---------- */
+function showView(view){
+  document.getElementById('homeView').classList.toggle('hidden', view !== 'home');
+  document.getElementById('aboutView').classList.toggle('hidden', view !== 'about');
+  window.scrollTo(0,0);
+}
+function scrollToId(id){
+  showView('home');
+  setTimeout(()=>{ document.getElementById(id)?.scrollIntoView({behavior:'smooth'}); }, 50);
+}
+
+/* ---------- QR generation ---------- */
+let currentStyle = 'square';
+const qrDiv = document.getElementById("qrcode");
+const downloadBtn = document.getElementById("downloadBtn");
+
+function setStyle(style, btn){
+  currentStyle = style;
+  document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  generateQR();
+}
+
+function generateQR(){
+  const val = document.getElementById("urlInput").value.trim();
+  const isTransparent = document.getElementById("transparentBg").checked;
+  const copyBtn = document.getElementById('copyBtn');
+  const shareBtn = document.getElementById('shareBtn');
+
+  if(!val){
+    qrDiv.innerHTML = '<span style="color:#94a3b8; background:#fff; padding:4px 8px; border-radius:6px; font-size:.85rem;">Preview area</span>';
+    downloadBtn.style.display = "none";
+    copyBtn.style.display = "none";
+    shareBtn.style.display = "none";
+    return;
+  }
+  qrDiv.innerHTML = "";
+  new QRCode(qrDiv, {
+    text: val,
+    width: 220,
+    height: 220,
+    colorDark: "#000000",
+    colorLight: isTransparent ? "rgba(255,255,255,0)" : "#ffffff",
+    correctLevel: QRCode.CorrectLevel.H
+  });
+  const canvas = qrDiv.querySelector('canvas');
+  if(canvas){ canvas.style.borderRadius = currentStyle === 'square' ? '0' : '14px'; }
+  downloadBtn.style.display = "block";
+  copyBtn.style.display = "block";
+  shareBtn.style.display = "block";
+}
+
+function useTemplate(prefill){
+  document.getElementById('urlInput').value = prefill;
+  generateQR();
+  scrollToId('generator');
+}
+
+/* ---------- download / share ---------- */
+function triggerDownloadProcess(){
+  document.getElementById("githubModal").classList.add('open');
+  const canvas = qrDiv.querySelector('canvas');
+  if(canvas){
+    const link = document.createElement('a');
+    link.download = 'qr-studio-pro.png';
+    link.href = canvas.toDataURL("image/png");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+}
+function closeGithubModal(){
+  document.getElementById("githubModal").classList.remove('open');
+}
+async function copyQrImage(){
+  const canvas = qrDiv.querySelector('canvas');
+  if(!canvas) return;
+  try{
+    canvas.toBlob(async (blob)=>{
+      await navigator.clipboard.write([new ClipboardItem({'image/png': blob})]);
+      showToast('QR image copied to clipboard');
+    });
+  }catch(e){
+    showToast('Copy not supported in this browser');
+  }
+}
+async function shareQr(){
+  const canvas = qrDiv.querySelector('canvas');
+  if(!canvas) return;
+  canvas.toBlob(async (blob)=>{
+    const file = new File([blob], 'qr-studio-pro.png', {type:'image/png'});
+    if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+      try{ await navigator.share({files:[file], title:'QR Code'}); }catch(e){}
+    } else {
+      triggerDownloadProcess();
+    }
+  });
+}
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+/* ---------- login (demo, local-only) ---------- */
+function openLogin(){
+  document.getElementById('loginModal').classList.add('open');
+  document.getElementById('loginError').style.display = 'none';
+}
+function closeLogin(){
+  document.getElementById('loginModal').classList.remove('open');
+}
+function handleLogin(e){
+  e.preventDefault();
+  const username = document.getElementById('loginUsername').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const errorEl = document.getElementById('loginError');
+  if(username.length < 2 || password.length < 4){
+    errorEl.style.display = 'block';
+    return;
+  }
+  errorEl.style.display = 'none';
+  try{ localStorage.setItem('qr-user', username); }catch(err){}
+  setLoggedInUI(username);
+  closeLogin();
+  document.getElementById('loginForm').reset();
+  showToast('Logged in as ' + username);
+}
+function logout(){
+  try{ localStorage.removeItem('qr-user'); }catch(err){}
+  setLoggedInUI(null);
+  showToast('Logged out');
+}
+function setLoggedInUI(username){
+  const outSlot = document.getElementById('loggedOutSlot');
+  const inSlot = document.getElementById('loggedInSlot');
+  if(username){
+    outSlot.classList.add('hidden');
+    inSlot.classList.remove('hidden');
+    document.getElementById('userNameLabel').textContent = username;
+    document.getElementById('userAvatar').textContent = username.charAt(0).toUpperCase();
+  } else {
+    outSlot.classList.remove('hidden');
+    inSlot.classList.add('hidden');
+  }
+}
+(function restoreSession(){
+  let saved = null;
+  try{ saved = localStorage.getItem('qr-user'); }catch(e){}
+  if(saved){ setLoggedInUI(saved); }
+})();
+
+/* ---------- scanner ---------- */
+let html5QrCode;
+function openScanner(){
+  document.getElementById("scannerModal").classList.add('open');
+  document.getElementById("resultBox").style.display = "none";
+  html5QrCode = new Html5Qrcode("reader");
+  html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: 230 },
+    (decodedText) => showScanResult(decodedText))
+    .catch(() => {
+      document.getElementById("reader").innerHTML = "<p style='padding:20px; text-align:center; color:#94a3b8;'>Camera access denied or unavailable.</p>";
+    });
+}
+function closeScanner(){
+  if(html5QrCode && html5QrCode.isScanning){
+    html5QrCode.stop().then(()=>{
+      html5QrCode.clear();
+      document.getElementById("scannerModal").classList.remove('open');
+    });
+  } else {
+    document.getElementById("scannerModal").classList.remove('open');
+  }
+}
+function scanFile(input){
+  if(input.files.length === 0) return;
+  const fileScanner = new Html5Qrcode("reader");
+  fileScanner.scanFile(input.files[0], true)
+    .then(text => showScanResult(text))
+    .catch(() => showToast("No QR code detected in this image."));
+}
+function showScanResult(text){
+  const resultBox = document.getElementById("resultBox");
+  const link = document.getElementById("scannedUrl");
+  resultBox.style.display = "block";
+  link.textContent = text;
+  link.href = text.startsWith("http") ? text : "#";
+  if(html5QrCode && html5QrCode.isScanning) html5QrCode.stop();
+}
+function copyScanResult(){
+  const text = document.getElementById('scannedUrl').textContent;
+  navigator.clipboard.writeText(text).then(()=>showToast('Copied to clipboard')).catch(()=>{});
+}
+
+/* ---------- stat counters ---------- */
+function animateCounters(){
+  document.querySelectorAll('.stat-num[data-target]').forEach(el=>{
+    const target = parseInt(el.getAttribute('data-target'),10);
+    const suffix = el.getAttribute('data-suffix') || '';
+    let cur = 0;
+    const step = Math.max(1, Math.floor(target/60));
+    const tick = ()=>{
+      cur += step;
+      if(cur >= target){ el.textContent = formatNum(target) + suffix; return; }
+      el.textContent = formatNum(cur) + suffix;
+      requestAnimationFrame(tick);
+    };
+    tick();
+  });
+}
+function formatNum(n){
+  if(n >= 1000000) return (n/1000000).toFixed(n%1000000===0?0:1) + 'M';
+  if(n >= 1000) return (n/1000).toFixed(0) + 'K';
+  return n;
+}
+const statsObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){ animateCounters(); statsObserver.disconnect(); }
+  });
+},{threshold:0.4});
+const statsBarEl = document.querySelector('.stats-bar');
+if(statsBarEl) statsObserver.observe(statsBarEl);
+
+/* ---------- back to top ---------- */
+window.addEventListener('scroll', ()=>{
+  document.getElementById('backTop').classList.toggle('show', window.scrollY > 500);
+});
+</script>
+
+
+<style>
+</style>
+<script>
+// your code goes here
+</script></body></html>
