@@ -42,8 +42,7 @@ The interface uses a **dark, glassmorphic, neon-gradient design** with floating 
 
 ## 🚀 Live Demo
 
-> Add your GitHub Pages or hosting link here once deployed, e.g.
-> `https://<your-username>.github.io/<repo-name>/`
+<img width="1876" height="907" alt="Src" src="https://github.com/user-attachments/assets/6831f699-57de-4704-be24-a18c7116f1fb" />
 
 ---
 
