@@ -42,10 +42,10 @@ The interface uses a **dark, glassmorphic, neon-gradient design** with floating 
 
 ##  Live Demo
 
-https://purring-ivory-hz0ncd2k.edgeone.dev/
+Try it:-  https://purring-ivory-hz0ncd2k.edgeone.dev/
 
 
-<img width="1876" height="907" alt="Src" src="https://github.com/user-attachments/assets/6831f699-57de-4704-be24-a18c7116f1fb" />
+https://github.com/user-attachments/assets/ec855cd3-2979-4dd2-ae4c-742d88c114da
 
 ---
 
