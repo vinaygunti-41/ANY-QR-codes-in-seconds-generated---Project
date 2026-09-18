@@ -40,13 +40,16 @@ The interface uses a **dark, glassmorphic, neon-gradient design** with floating 
 
 ---
 
-## 🚀 Live Demo
+##  Live Demo
+
+https://purring-ivory-hz0ncd2k.edgeone.dev/
+
 
 <img width="1876" height="907" alt="Src" src="https://github.com/user-attachments/assets/6831f699-57de-4704-be24-a18c7116f1fb" />
 
 ---
 
-## 🖥️ Getting Started
+##  Getting Started
 
 No build tools, frameworks, or installation required.
 
@@ -68,7 +71,7 @@ Then open `qr-studio-pro.html` in your browser.
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 - **HTML5** — semantic structure
 - **CSS3** — glassmorphism, gradients, animations, responsive layout
@@ -102,7 +105,7 @@ Please keep new features consistent with the existing design language and avoid 
 
 ---
 
-## 🐛 Found a bug or have an idea?
+##  Found a bug or have an idea?
 
 Open an [issue](../../issues) describing the problem or suggestion — screenshots and steps to reproduce are always helpful.
 
@@ -130,3 +133,4 @@ This project is open source and available under the [MIT License](LICENSE).
 If this project helped you, consider giving it a ⭐ on GitHub — it really helps!
 
 </div>
+created premium
