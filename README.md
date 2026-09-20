@@ -1,6 +1,6 @@
 <div align="center">
 
-# ▦ QR Studio Pro
+# ▦ QR Studio Proo
 
 **A free, private, and premium QR code generator & scanner — built with pure HTML, CSS and JavaScript.**
 
